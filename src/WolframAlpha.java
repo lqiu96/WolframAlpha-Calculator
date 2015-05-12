@@ -2,7 +2,9 @@ import java.util.Scanner;
 import java.util.Stack;
 
 /**
- * 
+ * My rendition of a Wolfram Alpha Calculator. Supports many operations
+ * Addition, Subtraction, Multiplication, Division, Modulus
+ * Trig functions and many bitwise operations
  * @author Lawrence
  */
 public class WolframAlpha {
@@ -48,7 +50,7 @@ public class WolframAlpha {
      */
     private static boolean checkValidExpression(String expression) throws InvalidExpression {
         Stack<String> strings = new Stack<>();
-        String currentLetter = null;
+        String currentLetter;
         for (int i = 0 ; i < expression.length(); i++) {
             currentLetter = expression.substring(i , i + 1);
             if (BEGIN.contains(currentLetter)) {

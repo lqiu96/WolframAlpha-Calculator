@@ -15,8 +15,8 @@ import java.math.BigDecimal;
  * @author Lawrence
  */
 public class ExpressionEvaluate {
-    private static VariableTree tree;
-    private TokenList tokenList;
+    private static VariableTree tree = new VariableTree();      //Instead of each expression having its own VariableTree
+    private TokenList tokenList;                                //Every expression now has this unique variable tree
     private String expression;
     private BigDecimal answer;              //Unfortunately not the fastest, but it's necessary for calculating floating
                                             //point numbers and such
@@ -26,7 +26,7 @@ public class ExpressionEvaluate {
      */
     public ExpressionEvaluate(String expression) {
         this.expression = expression;
-        tree = new VariableTree();
+//        tree = new VariableTree();
         tokenList = new TokenList(expression);
         ListIterator listIterator = tokenList.begin();
         answer = evaluate(listIterator);
@@ -64,14 +64,28 @@ public class ExpressionEvaluate {
      * @return The root of the tree in which all the other nodes are build around
      */
     private Node handleConditional(ListIterator iterator) {
-        Node node = handleRelational(iterator);
+        Node node = handleBitWiseOperations(iterator);
         if (iterator.tokenChar() == '?') {
             iterator.advance();
-            Node true_value = handleRelational(iterator);
+            Node true_value = handleBitWiseOperations(iterator);
             iterator.advance();
-            Node false_value = handleRelational(iterator);
+            Node false_value = handleBitWiseOperations(iterator);
             iterator.advance();
             node = new Conditional(node, true_value, false_value);
+        }
+        return node;
+    }
+
+    private Node handleBitWiseOperations(ListIterator iterator) {
+        Node node = handleRelational(iterator);
+        while (iterator.tokenChar() != 0
+                && (iterator.getToken().tokenText().equals("|") || iterator.getToken().tokenText().equals("&")
+                || iterator.getToken().tokenText().equals("^"))) {
+            Token operation = iterator.getToken();
+            iterator.advance();
+            if (operation.tokenChar() != 0) {
+                node = new Operation(node, operation.tokenText(), handleRelational(iterator));
+            }
         }
         return node;
     }
@@ -83,7 +97,7 @@ public class ExpressionEvaluate {
      * @return Root of the newly added tree
      */
     private Node handleRelational(ListIterator iterator) {
-        Node node = handleAddSub(iterator);
+        Node node = handleBitShift(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals(">") || iterator.getToken().tokenText().equals("<")
                 || iterator.getToken().tokenText().equals( ">=") || iterator.getToken().tokenText().equals("<=")
@@ -91,7 +105,25 @@ public class ExpressionEvaluate {
             Token operation = iterator.getToken();
             iterator.advance();
             if (operation.tokenChar() != 0) {
-                node = new Operation(node, operation.tokenText(), handleAddSub(iterator));
+                node = new Operation(node, operation.tokenText(), handleBitShift(iterator));
+            }
+        }
+        return node;
+    }
+
+    /**
+     * Deals with operators that are bitwise operations (>> $ <<) which shift the bits of a number a certain amount
+     * @param iterator Iterator which goes through the expression
+     * @return Either the node that contains the operation or null
+     */
+    private Node handleBitShift(ListIterator iterator) {
+        Node node = handleAddSub(iterator);
+        while (iterator.tokenChar() != 0
+                && (iterator.getToken().tokenText().equals(">>") || iterator.getToken().tokenText().equals("<<"))) {
+            Token operation = iterator.getToken();
+            iterator.advance();
+            if (operation.tokenChar() != 0) {
+                node = new Operation(node,operation.tokenText(), handleAddSub(iterator));
             }
         }
         return node;
