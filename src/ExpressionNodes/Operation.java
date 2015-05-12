@@ -56,7 +56,7 @@ public class Operation implements Node {
             case "==":
                 return (left.evaluate(tree).compareTo(right.evaluate(tree))) == 0 ? new BigDecimal(1) : new BigDecimal(0);
             case ">>":
-                return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());
+                return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());       //The following bitwise operations are also integer only
             case "<<":
                 return new BigDecimal(left.evaluate(tree).intValue() << right.evaluate(tree).intValue());
             case "|":
