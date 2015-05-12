@@ -3,7 +3,6 @@ package ExpressionVariables;
 import java.math.BigDecimal;
 
 /**
- *
  * @author Lawrence
  */
 public class VariableTree {
@@ -18,7 +17,8 @@ public class VariableTree {
 
     /**
      * Finds the location of the node if it exists and assigns it to be the value
-     * @param name Name of the variable
+     *
+     * @param name  Name of the variable
      * @param value Value of the variable
      */
     public void assign(String name, BigDecimal value) {
@@ -28,6 +28,7 @@ public class VariableTree {
 
     /**
      * Finds the node if it exists and gets its value
+     *
      * @param name Name of the variable
      * @return Value of the variable
      */
@@ -41,6 +42,7 @@ public class VariableTree {
      * Goes through it recursively:
      * -Left if less
      * -Right if more
+     *
      * @param name Name of the variable
      * @return Either new node if variable doesn't exist or the found node
      */
@@ -70,6 +72,7 @@ public class VariableTree {
     /**
      * Prints out the tree by starting at the root
      * -If null, there is nothing in the tree
+     *
      * @return String representation of the tree
      */
     @Override

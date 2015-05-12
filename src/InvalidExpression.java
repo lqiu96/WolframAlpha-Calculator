@@ -1,5 +1,4 @@
 /**
- *
  * @author Lawrence
  */
 public class InvalidExpression extends Throwable {

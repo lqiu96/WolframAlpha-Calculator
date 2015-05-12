@@ -6,7 +6,6 @@
 package ExpressionList;
 
 /**
- *
  * @author Lawrence
  */
 public class ListElement {
@@ -15,6 +14,7 @@ public class ListElement {
 
     /**
      * Sets the ExpressionList.Token value as long as token doesn't already have a value
+     *
      * @param token ExpressionList.Token to be stored
      */
     public void setToken(Token token) {
@@ -26,6 +26,7 @@ public class ListElement {
 
     /**
      * Gives back the token
+     *
      * @return ExpressionList.Token stored
      */
     public Token getToken() {
@@ -34,6 +35,7 @@ public class ListElement {
 
     /**
      * Sets the next Element
+     *
      * @param element This element's next value
      */
     public void setNext(ListElement element) {
@@ -45,6 +47,7 @@ public class ListElement {
 
     /**
      * Gives back the next value
+     *
      * @return Next ListElement
      */
     public ListElement getNext() {

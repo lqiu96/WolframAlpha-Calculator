@@ -3,7 +3,6 @@ package ExpressionList;
 import java.math.BigDecimal;
 
 /**
- *
  * @author Lawrence
  */
 public class TokenList {
@@ -26,6 +25,7 @@ public class TokenList {
 
     /**
      * Head and tail are both null. Creates the expression. Creates list of tokens
+     *
      * @param expression Expression be evaluated
      */
     public TokenList(String expression) {
@@ -42,6 +42,7 @@ public class TokenList {
      * -Variable
      * -Value
      * -Other (Parenthesis)
+     *
      * @param expression Expression to be evaluated
      */
     private void createExpression(String expression) {
@@ -75,7 +76,7 @@ public class TokenList {
                 i++;
                 if (i < expression.length() && (expression.charAt(i) == '=' ||              //Check for >=, <=
                         expression.charAt(i) == '>' || expression.charAt(i) == '<')) {      //Check for >>, <<
-                    s+= expression.charAt(i);
+                    s += expression.charAt(i);
                     i++;
                 }
                 Token token = new Token(s);
@@ -89,6 +90,7 @@ public class TokenList {
 
     /**
      * If there is no tokens
+     *
      * @return if head is null
      */
     public boolean isEmpty() {
@@ -97,6 +99,7 @@ public class TokenList {
 
     /**
      * Gets the first token
+     *
      * @return head's token
      */
     public Token first() {
@@ -105,6 +108,7 @@ public class TokenList {
 
     /**
      * Gives back Iterator that starts at the beginning
+     *
      * @return ListIterator that starts in the beginning
      */
     public ListIterator begin() {
@@ -113,6 +117,7 @@ public class TokenList {
 
     /**
      * Gives back Iterator that starts at the end
+     *
      * @return ListIterator that starts at the end
      */
     public ListIterator end() {
@@ -123,19 +128,17 @@ public class TokenList {
      * In the list add the tokens to the end of the list
      * Has to check if list is already empty or not
      * -If empty, implementations are different
+     *
      * @param token ExpressionList.Token to be pushed back
      */
     public void pushBack(Token token) {
         ListElement element = new ListElement();
         element.setToken(token);
         element.setNext(null);
-        if (isEmpty())
-        {
+        if (isEmpty()) {
             head = element;
             tail = element;
-        }
-        else
-        {
+        } else {
             tail.setNext(element);
             tail = element;
         }
@@ -144,18 +147,17 @@ public class TokenList {
     /**
      * Adds the token to the front of the list
      * Implementations differ if the list is empty
+     *
      * @param token ExpressionList.Token to be pushed to the front of the list
      */
     public void pushFront(Token token) {
         ListElement element = new ListElement();
         element.setToken(token);
         element.setNext(head);
-        if (isEmpty())
-        {
+        if (isEmpty()) {
             head = element;
             tail = element;
-        }
-        else {
+        } else {
             head = element;
         }
     }
@@ -163,15 +165,13 @@ public class TokenList {
     /**
      * Removes the ListElement that is at the front of the list
      * Sets that value to be null
+     *
      * @return Either null or the token at the front
      */
     public Token popFront() {
-        if (!isEmpty())
-        {
+        if (!isEmpty()) {
             Token token = first();
-            ListElement f = head;
             head = head.getNext();
-            f = null;
             return token;
         }
         return null;
@@ -179,6 +179,7 @@ public class TokenList {
 
     /**
      * Gives back an image of the series of tokens used to construct the list
+     *
      * @return String representation of the list with each of the tokens laid out.
      */
     @Override

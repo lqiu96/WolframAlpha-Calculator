@@ -2,10 +2,10 @@ package ExpressionNodes;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import ExpressionVariables.VariableTree;
 
 /**
- *
  * @author Lawrence
  */
 public class Operation implements Node {
@@ -15,9 +15,10 @@ public class Operation implements Node {
 
     /**
      * Creates a tree in which operation is the root and has left and right sub-trees
-     * @param left Stored to the left of the root
+     *
+     * @param left      Stored to the left of the root
      * @param operation Operation to be done
-     * @param right Stored to the right of the root
+     * @param right     Stored to the right of the root
      */
     public Operation(Node left, String operation, Node right) {
         this.left = left;
@@ -27,6 +28,7 @@ public class Operation implements Node {
 
     /**
      * Evaluates the expression
+     *
      * @param tree Checks to help evaluated variables
      * @return Evaluated expression
      */
@@ -42,7 +44,6 @@ public class Operation implements Node {
                 return left.evaluate(tree).divide(right.evaluate(tree), 25, RoundingMode.HALF_UP);
             case "%":
                 return new BigDecimal(left.evaluate(tree).intValue() % right.evaluate(tree).intValue());  //Modulus only applies to integer values
-
             case ">":
                 return (left.evaluate(tree).compareTo(right.evaluate(tree))) > 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "<":
@@ -56,7 +57,7 @@ public class Operation implements Node {
             case "==":
                 return (left.evaluate(tree).compareTo(right.evaluate(tree))) == 0 ? new BigDecimal(1) : new BigDecimal(0);
             case ">>":
-                return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());       //The following bitwise operations are also integer only
+                return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());   //The following bitwise operations are also integer only
             case "<<":
                 return new BigDecimal(left.evaluate(tree).intValue() << right.evaluate(tree).intValue());
             case "|":
@@ -75,6 +76,7 @@ public class Operation implements Node {
 
     /**
      * Gives back representation of the operation
+     *
      * @return String representation of the operation
      */
     public String toString() {

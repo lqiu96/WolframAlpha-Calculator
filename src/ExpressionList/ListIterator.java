@@ -3,7 +3,6 @@ package ExpressionList;
 import java.math.BigDecimal;
 
 /**
- *
  * @author Lawrence
  */
 public class ListIterator {
@@ -12,8 +11,9 @@ public class ListIterator {
 
     /**
      * Stores the current ListElement and tokenlist
+     *
      * @param tokenList TookenList that the iterator is using
-     * @param element Current element
+     * @param element   Current element
      */
     public ListIterator(TokenList tokenList, ListElement element) {
         list = tokenList;
@@ -22,6 +22,7 @@ public class ListIterator {
 
     /**
      * Gives back the current token
+     *
      * @return current token the iterator is on
      */
     public Token getToken() {
@@ -30,10 +31,10 @@ public class ListIterator {
 
     /**
      * As long as the token is not null, it returns the first char of the tokenText
+     *
      * @return Either 0 or char depending if the current value is null or not
      */
-    public char tokenChar()
-    {
+    public char tokenChar() {
         if (current != null)
             return current.getToken().tokenChar();
         else
@@ -42,40 +43,40 @@ public class ListIterator {
 
     /**
      * Is the current ExpressionList.Token an integer?
+     *
      * @return if token is integer
      */
-    public boolean currentIsInteger()
-    {
+    public boolean currentIsInteger() {
         return current.getToken().isInteger();
     }
 
     /**
      * Integer representation of the current token
+     *
      * @return int version of the token
      */
-    public BigDecimal value()
-    {
+    public BigDecimal value() {
         return current.getToken().value();
     }
 
     /**
      * Goes the next token by assigning the current token to the next one
      */
-    public void advance()
-    {
+    public void advance() {
         if (current != null)
             current = current.getNext();
     }
 
     /**
      * Compares the two listIterator
+     *
      * @param object Other ListIterator
      * @return If the current values are the same and false if it does not or if it is not a ListIterator
      */
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof ListIterator)) {
-            return  false;
+            return false;
         }
         ListIterator other = (ListIterator) object;
         return current == other.current;
@@ -83,13 +84,14 @@ public class ListIterator {
 
     /**
      * By reading Effective Java by Joshua Bloch, I'm reminded to modify my hashCode() method
-     * whenevery I modify my equals(). It truely has no purpose regarding to the fact that I
+     * whenever I modify my equals(). It truly has no purpose regarding to the fact that I
      * am not using any data structure which requires a hashing (HashSet, HashMap, HashTable).
      * Nonetheless, I am overriding this method out of respect for Joshua Bloch.
-     * @return
+     *
+     * @return Simple hashCode variation. Xor with 1 to scrame the bits. Really does nothing
      */
     @Override
     public int hashCode() {
-        return super.hashCode() + 1;        //Oh my! Look at that modification.
+        return super.hashCode() ^ 1;        //Oh my! Look at that modification.
     }
 }

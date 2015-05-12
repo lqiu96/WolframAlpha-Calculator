@@ -3,7 +3,6 @@ package ExpressionList;
 import java.math.BigDecimal;
 
 /**
- *
  * @author Lawrence
  */
 public class Token {
@@ -16,6 +15,7 @@ public class Token {
      * Sets the value to be the number
      * It is an integer
      * It has no text (Blank string is default)
+     *
      * @param num Number to be stored
      */
     public Token(BigDecimal num) {
@@ -23,12 +23,13 @@ public class Token {
         isInteger = true;
         text = "";
     }
-    
+
     /**
      * Variable or Operand:
      * Value is set to 0
      * Not an integer
      * Text is the name passed
+     *
      * @param name Variable name
      */
     public Token(String name) {
@@ -39,6 +40,7 @@ public class Token {
 
     /**
      * Checks if Value is null
+     *
      * @return True or False
      */
     public boolean isNull() {
@@ -47,6 +49,7 @@ public class Token {
 
     /**
      * Gives back if it is an integer
+     *
      * @return True of False if it is an integer
      */
     public boolean isInteger() {
@@ -55,6 +58,7 @@ public class Token {
 
     /**
      * Gives back the number
+     *
      * @return Integer representation of the value
      */
     public BigDecimal value() {
@@ -63,6 +67,7 @@ public class Token {
 
     /**
      * Gives back the text
+     *
      * @return The text stored
      */
     public String tokenText() {
@@ -71,6 +76,7 @@ public class Token {
 
     /**
      * The first bit of the text stored
+     *
      * @return The first char of the text
      */
     public char tokenChar() {
@@ -82,6 +88,7 @@ public class Token {
 
     /**
      * Gives back the text
+     *
      * @return String representation of the text stored.
      */
     @Override

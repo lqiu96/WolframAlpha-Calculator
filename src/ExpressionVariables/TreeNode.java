@@ -3,7 +3,6 @@ package ExpressionVariables;
 import java.math.BigDecimal;
 
 /**
- *
  * @author Lawrence
  */
 public class TreeNode {
@@ -16,8 +15,9 @@ public class TreeNode {
     /**
      * TreeNode constructor for each Node inside the VariableTRee
      * Sets left and right values to be null as default
+     *
      * @param newName Sets the node's name
-     * @param val Sets the node's value
+     * @param val     Sets the node's value
      */
     public TreeNode(String newName, BigDecimal val) {
         isValid = false;
@@ -33,6 +33,7 @@ public class TreeNode {
 
     /**
      * Gives back the name of the node
+     *
      * @return The variable's name
      */
     public String getName() {
@@ -41,6 +42,7 @@ public class TreeNode {
 
     /**
      * Gives back the Node on the left
+     *
      * @return The TreeNode's left sibling
      */
     public TreeNode getLeft() {
@@ -49,6 +51,7 @@ public class TreeNode {
 
     /**
      * Gives back the Node on the right
+     *
      * @return The TreeNode's right sibling
      */
     public TreeNode getRight() {
@@ -57,6 +60,7 @@ public class TreeNode {
 
     /**
      * Gives back the variables value
+     *
      * @return TreeNode's value
      */
     public BigDecimal getValue() {
@@ -65,18 +69,20 @@ public class TreeNode {
 
     /**
      * Sets the value correctly
+     *
      * @param value Sets TreeNode to be this
      */
     public void setValue(BigDecimal value) {
         this.value = value;
     }
 
-    public  boolean isValid() {
+    public boolean isValid() {
         return isValid;
     }
 
     /**
      * Prints out the Node and its siblings
+     *
      * @return String of the current node and it's left and right values
      */
     @Override

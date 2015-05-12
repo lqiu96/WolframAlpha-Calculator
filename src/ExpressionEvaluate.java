@@ -11,7 +11,6 @@ import ExpressionVariables.VariableTree;
 import java.math.BigDecimal;
 
 /**
- *
  * @author Lawrence
  */
 public class ExpressionEvaluate {
@@ -19,9 +18,11 @@ public class ExpressionEvaluate {
     private TokenList tokenList;                                //Every expression now has this unique variable tree
     private String expression;
     private BigDecimal answer;              //Unfortunately not the fastest, but it's necessary for calculating floating
-                                            //point numbers and such
+    //point numbers and such
+
     /**
      * Creates a list of ExpressionList.Token objects to iterate through and evaluate
+     *
      * @param expression String that contains a valid expression to be evaluated
      */
     public ExpressionEvaluate(String expression) {
@@ -34,6 +35,7 @@ public class ExpressionEvaluate {
 
     /**
      * Evaluates the tree that was built
+     *
      * @param iterator Iterator to iterate through the list of tokens at the correct spot
      * @return The answer that the tree gives
      */
@@ -44,6 +46,7 @@ public class ExpressionEvaluate {
 
     /**
      * Checks for the assignment operator and assigns the variable name the value
+     *
      * @param iterator Iterator to iterate through the list of tokens at the correct spot
      * @return The root of the node that the other nodes are built around
      */
@@ -60,6 +63,7 @@ public class ExpressionEvaluate {
     /**
      * Checks for the conditional operator by checking for the question mark.
      * It creates the Conditional object by passing it the test, trueCase, and falseCase
+     *
      * @param iterator Iterator to iterate through the list of tokens at the correct spot.
      * @return The root of the tree in which all the other nodes are build around
      */
@@ -93,6 +97,7 @@ public class ExpressionEvaluate {
     /**
      * Deals will all the other relational operations and creates a new Operation object
      * at the root in which all the nodes are built around it
+     *
      * @param iterator Iterator which iterates through the list of tokens at the correct spot
      * @return Root of the newly added tree
      */
@@ -100,8 +105,8 @@ public class ExpressionEvaluate {
         Node node = handleBitShift(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals(">") || iterator.getToken().tokenText().equals("<")
-                || iterator.getToken().tokenText().equals( ">=") || iterator.getToken().tokenText().equals("<=")
-                || iterator.getToken().tokenText().equals("!=")|| iterator.getToken().tokenText().equals("=="))) {
+                || iterator.getToken().tokenText().equals(">=") || iterator.getToken().tokenText().equals("<=")
+                || iterator.getToken().tokenText().equals("!=") || iterator.getToken().tokenText().equals("=="))) {
             Token operation = iterator.getToken();
             iterator.advance();
             if (operation.tokenChar() != 0) {
@@ -113,6 +118,7 @@ public class ExpressionEvaluate {
 
     /**
      * Deals with operators that are bitwise operations (>> $ <<) which shift the bits of a number a certain amount
+     *
      * @param iterator Iterator which goes through the expression
      * @return Either the node that contains the operation or null
      */
@@ -123,7 +129,7 @@ public class ExpressionEvaluate {
             Token operation = iterator.getToken();
             iterator.advance();
             if (operation.tokenChar() != 0) {
-                node = new Operation(node,operation.tokenText(), handleAddSub(iterator));
+                node = new Operation(node, operation.tokenText(), handleAddSub(iterator));
             }
         }
         return node;
@@ -131,6 +137,7 @@ public class ExpressionEvaluate {
 
     /**
      * Evaluates the addition and subtraction operations
+     *
      * @param iterator Iterator to pass through the list of tokens at the correct spot
      * @return New root built and all the nodes that built around it
      */
@@ -152,6 +159,7 @@ public class ExpressionEvaluate {
     /**
      * Handles the next order of operations which is multiplication, division, and modulo
      * Builds the tree this way
+     *
      * @param iterator Iterator to iterate through the list of tokens at the corret spot
      * @return Newly formed tree and returns the root
      */
@@ -173,7 +181,7 @@ public class ExpressionEvaluate {
      * Or if it is a value returns the new Value object
      * Or if it is a variable it creates a new Variable object
      * If none of the above, it simply returns null
-     *
+     * <p>
      * Added support for Parenthesis: [ && {, so they're not recognized as parenthesis
      *
      * @param iterator Iterator to iterate through the list of tokens at the corret spot
@@ -206,12 +214,12 @@ public class ExpressionEvaluate {
     /**
      * It gets the trig function and determines the inside bit of which the trig function will call it on
      * To evaluated the insdie, it calls a new ExpressionEvaluate object and evalutes the inside that way
-     *
+     * <p>
      * P.S. The inputted angle should be in degrees since each of the Trig enums convert the BigDecimal
      * parameter they get to radians.
-     *
+     * <p>
      * e.g. It could be tan(5 * 5 + 9 % 4), in which case it must be reduced into tan(26)
-     *
+     * <p>
      * Even though Intellij says that there is a change of this returning null...
      * There really is no chance of this returning null since the only way this function was called in the first place
      * was because the token was found to be a trig function. If it weren't a trig function, then yes, it would return
@@ -239,10 +247,10 @@ public class ExpressionEvaluate {
     /**
      * It finds the value that the trig function will use it on by either looking for a parenthesis
      * or the first number it sees.
-     *
+     * <p>
      * e.g. tan(5 * 5) will be evaluated as tan(25)
-     *      tan 5 * 5 will be evaluated as tan(5) * 5
-     *
+     * tan 5 * 5 will be evaluated as tan(5) * 5
+     * <p>
      * Added support for the following: ( { [ ) { [ Are now recognized as parenthesis
      *
      * @param iterator Iterator which iterates through to find the parameters
@@ -271,6 +279,7 @@ public class ExpressionEvaluate {
     /**
      * Checks to see if the token is a Trigonometric value. Compares it
      * with the String representation of each Enumeration value
+     *
      * @param s String value of the tokenText
      * @return Boolean depending if it is a trig function or not
      */
@@ -286,6 +295,7 @@ public class ExpressionEvaluate {
 
     /**
      * Simples gives back what expression is equivalent to
+     *
      * @return The integer value of the expression
      */
     public BigDecimal getAnswer() {
@@ -294,6 +304,7 @@ public class ExpressionEvaluate {
 
     /**
      * USed for debugging purposes to see if token list is correctly split into tokens
+     *
      * @return Tokenlist Current list of tokens
      */
     public TokenList getTokenList() {
@@ -304,6 +315,7 @@ public class ExpressionEvaluate {
      * Prints out the details of the expression
      * expression was declared a global variable just for this method
      * answers default value is 0, but should be the correct value when evaluated
+     *
      * @return String of information dealing with the expression, ExpressionList.Token list, and the answer
      */
     @Override

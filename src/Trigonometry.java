@@ -1,9 +1,9 @@
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import static java.lang.Math.*;
 
 /**
- *
  * @author Lawrence
  */
 public enum Trigonometry {

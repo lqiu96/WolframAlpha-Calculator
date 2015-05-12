@@ -1,12 +1,12 @@
 package ExpressionNodes;
 
 import java.math.BigDecimal;
+
 import ExpressionVariables.VariableTree;
 
 /**
- *
  * @author Lawrence
  */
 public interface Node {
-    public BigDecimal evaluate(VariableTree tree);
+    BigDecimal evaluate(VariableTree tree); //Keyword Public would be redundant for interface methods
 }
