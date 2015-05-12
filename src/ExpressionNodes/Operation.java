@@ -53,6 +53,10 @@ public class Operation implements Node {
             return (left.evaluate(tree).compareTo(right.evaluate(tree))) != 0 ? new BigDecimal(1) : new BigDecimal(0);
         } else if (operation.equals("==")) {
             return (left.evaluate(tree).compareTo(right.evaluate(tree))) == 0 ? new BigDecimal(1) : new BigDecimal(0);
+        } else if (operation.equals(">>")) {
+            return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());
+        } else if (operation.equals("<<")) {
+            return new BigDecimal(left.evaluate(tree).intValue() << right.evaluate(tree).intValue());
         } else if (operation.equals("=")) {
             tree.assign(((Variable) left).getName(), right.evaluate(tree));
             return tree.lookup(((Variable) left).getName());

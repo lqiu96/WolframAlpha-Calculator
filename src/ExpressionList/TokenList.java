@@ -73,7 +73,8 @@ public class TokenList {
                 String s = "";                                              //Must be operator or parenthesis or period
                 s += expression.charAt(i);
                 i++;
-                if (i < expression.length() && expression.charAt(i) == '=') {
+                if (i < expression.length() && (expression.charAt(i) == '=' ||              //Check for >=, <=
+                        expression.charAt(i) == '>' || expression.charAt(i) == '<')) {      //Check for >>, <<
                     s+= expression.charAt(i);
                     i++;
                 }
