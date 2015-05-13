@@ -44,6 +44,16 @@ public class Operation implements Node {
                 return left.evaluate(tree).divide(right.evaluate(tree), 25, RoundingMode.HALF_UP);
             case "%":
                 return new BigDecimal(left.evaluate(tree).intValue() % right.evaluate(tree).intValue());  //Modulus only applies to integer values
+            case ">>":
+                return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());   //The following bitwise operations are also integer only
+            case "<<":
+                return new BigDecimal(left.evaluate(tree).intValue() << right.evaluate(tree).intValue());
+            case "|":
+                return new BigDecimal(left.evaluate(tree).intValue() | right.evaluate(tree).intValue());
+            case "&":
+                return new BigDecimal(left.evaluate(tree).intValue() & right.evaluate(tree).intValue());
+            case "^":
+                return new BigDecimal(left.evaluate(tree).intValue() ^ right.evaluate(tree).intValue());
             case ">":
                 return (left.evaluate(tree).compareTo(right.evaluate(tree))) > 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "<":
@@ -56,16 +66,10 @@ public class Operation implements Node {
                 return (left.evaluate(tree).compareTo(right.evaluate(tree))) != 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "==":
                 return (left.evaluate(tree).compareTo(right.evaluate(tree))) == 0 ? new BigDecimal(1) : new BigDecimal(0);
-            case ">>":
-                return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());   //The following bitwise operations are also integer only
-            case "<<":
-                return new BigDecimal(left.evaluate(tree).intValue() << right.evaluate(tree).intValue());
-            case "|":
-                return new BigDecimal(left.evaluate(tree).intValue() | right.evaluate(tree).intValue());
-            case "&":
-                return new BigDecimal(left.evaluate(tree).intValue() & right.evaluate(tree).intValue());
-            case "^":
-                return new BigDecimal(left.evaluate(tree).intValue() ^ right.evaluate(tree).intValue());
+            case "||":
+                return (left.evaluate(tree).doubleValue() != 0 || right.evaluate(tree).doubleValue() != 0) ? new BigDecimal(1) : new BigDecimal(0);
+            case "&&":
+                return (left.evaluate(tree).doubleValue() != 0 && right.evaluate(tree).doubleValue() != 0) ? new BigDecimal(1) : new BigDecimal(0);
             case "=":
                 tree.assign(((Variable) left).getName(), right.evaluate(tree));
                 return tree.lookup(((Variable) left).getName());

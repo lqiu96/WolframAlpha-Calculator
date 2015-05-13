@@ -68,18 +68,37 @@ public class ExpressionEvaluate {
      * @return The root of the tree in which all the other nodes are build around
      */
     private Node handleConditional(ListIterator iterator) {
-        Node node = handleBitWiseOperations(iterator);
+        Node node = handleLogicalOperators(iterator);
         if (iterator.tokenChar() == '?') {
             iterator.advance();
-            Node true_value = handleBitWiseOperations(iterator);
+            Node true_value = handleLogicalOperators(iterator);
             iterator.advance();
-            Node false_value = handleBitWiseOperations(iterator);
+            Node false_value = handleLogicalOperators(iterator);
             iterator.advance();
             node = new Conditional(node, true_value, false_value);
         }
         return node;
     }
 
+    private Node handleLogicalOperators(ListIterator iterator) {
+        Node node = handleBitWiseOperations(iterator);
+        while (iterator.tokenChar() != 0
+                && (iterator.getToken().tokenText().equals("||") || iterator.getToken().tokenText().equals("&&"))) {
+            Token operation = iterator.getToken();
+            iterator.advance();
+            if (operation.tokenChar() != 0) {
+                node = new Operation(node, operation.tokenText(), handleBitWiseOperations((iterator)));
+            }
+        }
+        return node;
+    }
+
+    /**
+     * Deals with all the bitwise shifts, Exclusive or (XOR), Or (|), And (&)
+     *
+     * @param iterator Iterator which iterates through the list of tokens to the correct spot
+     * @return Root of the newly added tree
+     */
     private Node handleBitWiseOperations(ListIterator iterator) {
         Node node = handleRelational(iterator);
         while (iterator.tokenChar() != 0

@@ -75,7 +75,8 @@ public class TokenList {
                 s += expression.charAt(i);
                 i++;
                 if (i < expression.length() && (expression.charAt(i) == '=' ||              //Check for >=, <=
-                        expression.charAt(i) == '>' || expression.charAt(i) == '<')) {      //Check for >>, <<
+                        expression.charAt(i) == '>' || expression.charAt(i) == '<' ||       //Check for >>, <<
+                        expression.charAt(i) == '&' || expression.charAt(i) == '|')) {      //Check for ||, &&
                     s += expression.charAt(i);
                     i++;
                 }

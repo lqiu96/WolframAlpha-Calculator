@@ -58,7 +58,7 @@ public class WolframAlpha {
                 strings.add(currentLetter);
             } else if (END.contains(currentLetter)) {
                 if (strings.empty()) {
-                    throw new InvalidExpression("Unable to evalute expression: No front matching parenthesis");
+                    throw new InvalidExpression("Unable to evaluate expression: No front matching parenthesis");
                 } else {
                     if (strings.peek().equals("(") && !currentLetter.equals(")")) {
                         throw new InvalidExpression("Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
