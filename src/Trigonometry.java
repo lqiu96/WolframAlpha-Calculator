@@ -4,6 +4,9 @@ import java.math.RoundingMode;
 import static java.lang.Math.*;
 
 /**
+ * CSC, SEC, COT are now represented as 1/SIN, 1/COS, 1/TAN respectively
+ * ARCCSC, ARCSEC, ARCCOT are now represented as 1/ARCSIN, 1/ARCCOS, !/ARCTAN respectively
+ *
  * @author Lawrence
  */
 public enum Trigonometry {
@@ -31,24 +34,21 @@ public enum Trigonometry {
     CSC {
         @Override
         public BigDecimal getTrigValue(BigDecimal decimal) {
-            decimal = convertToRadians(decimal);
-            BigDecimal sinValue = new BigDecimal(sin(decimal.doubleValue()));
+            BigDecimal sinValue = SIN.getTrigValue(decimal);
             return new BigDecimal(1).divide(sinValue, 25, RoundingMode.HALF_UP);
         }
     },
     SEC {
         @Override
         public BigDecimal getTrigValue(BigDecimal decimal) {
-            decimal = convertToRadians(decimal);
-            BigDecimal cosValue = new BigDecimal(cos(decimal.doubleValue()));
+            BigDecimal cosValue = COS.getTrigValue(decimal);
             return new BigDecimal(1).divide(cosValue, 25, RoundingMode.HALF_UP);
         }
     },
     COT {
         @Override
         public BigDecimal getTrigValue(BigDecimal decimal) {
-            decimal = convertToRadians(decimal);
-            BigDecimal tanValue = new BigDecimal(tan(decimal.doubleValue()));
+            BigDecimal tanValue = TAN.getTrigValue(decimal);
             return new BigDecimal(1).divide(tanValue, 25, RoundingMode.HALF_UP);
         }
     },
@@ -76,24 +76,21 @@ public enum Trigonometry {
     ARCCSC {
         @Override
         public BigDecimal getTrigValue(BigDecimal decimal) {
-            decimal = convertToRadians(decimal);
-            BigDecimal asinValue = new BigDecimal(asin(decimal.doubleValue()));
+            BigDecimal asinValue = ARCSIN.getTrigValue(decimal);
             return new BigDecimal(1).divide(asinValue, 25, RoundingMode.HALF_UP);
         }
     },
     ARCSEC {
         @Override
         public BigDecimal getTrigValue(BigDecimal decimal) {
-            decimal = convertToRadians(decimal);
-            BigDecimal acosValue = new BigDecimal(acos(decimal.doubleValue()));
+            BigDecimal acosValue = ARCCOS.getTrigValue(decimal);
             return new BigDecimal(1).divide(acosValue, 25, RoundingMode.HALF_UP);
         }
     },
     ACRCOT {
         @Override
         public BigDecimal getTrigValue(BigDecimal decimal) {
-            decimal = convertToRadians(decimal);
-            BigDecimal atanValue = new BigDecimal(atan(decimal.doubleValue()));
+            BigDecimal atanValue = ARCTAN.getTrigValue(decimal);
             return new BigDecimal(1).divide(atanValue, 25, RoundingMode.HALF_UP);
         }
     };
@@ -102,8 +99,21 @@ public enum Trigonometry {
 
     }
 
+    /**
+     * For each of the Trig Function is gets the trig values
+     * Converts the decimal into radians then evaluates
+     *
+     * @param decimal Angle in degrees
+     * @return Angle in radians
+     */
     public abstract BigDecimal getTrigValue(BigDecimal decimal);
 
+    /**
+     * Degrees is multiplied by pi/180 to get the radians representation
+     *
+     * @param degrees Angle in degrees
+     * @return Angle in radians, rounded up with 25 decimal points
+     */
     public BigDecimal convertToRadians(BigDecimal degrees) {
         return degrees.multiply(new BigDecimal(Math.PI)).divide(new BigDecimal(180), 25, RoundingMode.HALF_UP);
     }

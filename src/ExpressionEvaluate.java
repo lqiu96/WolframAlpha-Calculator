@@ -277,6 +277,7 @@ public class ExpressionEvaluate {
         for (Trigonometry trigonometry : allTrigValues) {
             if (trig.toLowerCase().equals(trigonometry.toString().toLowerCase())) {
                 trigUsed = trigonometry;
+                break;      //Once finds correct trig function, stops looking through all of them
             }
         }
         return trigUsed.getTrigValue(node.evaluate(tree));
