@@ -12,13 +12,26 @@ import java.math.BigDecimal;
 
 /**
  * @author Lawrence
+ * Expression is evaluated in a Recursive Descent Parsing method
+ * In terms of order of operations:
+ * 1. Parenthesis, Variables, Trig Expressions
+ * 2. Operations (*, /, %)
+ * 3. Addition and Subtraction
+ * 4. Shifting Bits (>>, <<)
+ * 5. Relational Operations (>, <, >=, <=, ==, !=)
+ * 6. BitWise Operations (|, &, ^)
+ * 7. Logical Operations (&&, ||)
+ * 8. Conditional Operation ((True/False Expression) ? TrueCase : FalseCase)
+ * 9. Assignment (=)
+ *
+ * Then is is all evaluated
  */
 public class ExpressionEvaluate {
     private static VariableTree tree = new VariableTree();      //Instead of each expression having its own VariableTree
     private TokenList tokenList;                                //Every expression now has this unique variable tree
     private String expression;
     private BigDecimal answer;              //Unfortunately not the fastest, but it's necessary for calculating floating
-    //point numbers and such
+                                            //point numbers and such
 
     /**
      * Creates a list of ExpressionList.Token objects to iterate through and evaluate
@@ -80,6 +93,12 @@ public class ExpressionEvaluate {
         return node;
     }
 
+    /**
+     * Checks the expression for logical operations dealing with Or and And
+     * Expressions to the left and right that are evaluated as Not 0 are True and 0 as False
+     * @param iterator Iterator to iterate through the list of tokens
+     * @return Root of tree in which all other nodes are build around
+     */
     private Node handleLogicalOperators(ListIterator iterator) {
         Node node = handleBitWiseOperations(iterator);
         while (iterator.tokenChar() != 0
