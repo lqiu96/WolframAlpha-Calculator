@@ -9,7 +9,9 @@ TO-DO:
 1. Modify so that variables are only created created by using the keyword 'let' in front. Done so that I can introduce new
 global scientific and mathematical constants to be evaluated.
   -e.g. let x = 5 (new) instead of x = 5 (old)
+  </br>
   Proposed: 5/15/15
+  </br>
   Completed: NA
 </p>
 <p>
