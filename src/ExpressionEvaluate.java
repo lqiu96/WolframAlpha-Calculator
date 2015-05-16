@@ -40,7 +40,6 @@ public class ExpressionEvaluate {
      */
     public ExpressionEvaluate(String expression) {
         this.expression = expression;
-//        tree = new VariableTree();
         tokenList = new TokenList(expression);
         ListIterator listIterator = tokenList.begin();
         answer = evaluate(listIterator);
@@ -84,11 +83,11 @@ public class ExpressionEvaluate {
         Node node = handleLogicalOperators(iterator);
         if (iterator.tokenChar() == '?') {
             iterator.advance();
-            Node true_value = handleLogicalOperators(iterator);
+            Node trueCase = handleLogicalOperators(iterator);
             iterator.advance();
-            Node false_value = handleLogicalOperators(iterator);
+            Node falseCase = handleLogicalOperators(iterator);
             iterator.advance();
-            node = new Conditional(node, true_value, false_value);
+            node = new Conditional(node, trueCase, falseCase);
         }
         return node;
     }
@@ -280,7 +279,7 @@ public class ExpressionEvaluate {
                 break;      //Once finds correct trig function, stops looking through all of them
             }
         }
-        return trigUsed.getTrigValue(node.evaluate(tree));
+        return trigUsed.getTrigValue(node.evaluate(tree));      //Refer to JavaDoc if Intellij shows that it will be null
     }
 
     /**
