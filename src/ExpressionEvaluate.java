@@ -24,7 +24,7 @@ import java.math.BigDecimal;
  * 8. Conditional Operation ((True/False Expression) ? TrueCase : FalseCase)
  * 9. Assignment (=)
  *
- * Then is is all evaluated
+ * Then is is all evaluated in ExpressionEvalute/Operation.java
  */
 public class ExpressionEvaluate {
     private static VariableTree tree = new VariableTree();      //Instead of each expression having its own VariableTree
@@ -338,15 +338,6 @@ public class ExpressionEvaluate {
      */
     public BigDecimal getAnswer() {
         return answer;
-    }
-
-    /**
-     * USed for debugging purposes to see if token list is correctly split into tokens
-     *
-     * @return Tokenlist Current list of tokens
-     */
-    public TokenList getTokenList() {
-        return tokenList;
     }
 
     /**
