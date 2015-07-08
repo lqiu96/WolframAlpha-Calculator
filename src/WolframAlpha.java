@@ -17,14 +17,18 @@ public class WolframAlpha {
      */
     public static void main(String[] args) {
         ExpressionEvaluate expressionEvaluate;
-        Scanner scanner;
-        String answer, expression;
-        do {
-            scanner = new Scanner(System.in);
-            System.out.println("Enter an expression to evaluate: ");
+        Scanner scanner = new Scanner(System.in);
+        String expression;
+        System.out.println("Type end to exit out of the application");
+        System.out.println("Enter an expression to evaluate: ");
+        while (true) {
             expression = scanner.nextLine();
+            if (expression.toLowerCase().equals("end")) {
+                break;
+            }
             try {
-                boolean valid = checkValidExpression(expression);
+                boolean valid = checkParenthesisExpression(expression)
+                        && checkLetEqualityExpression(expression);
                 if (valid) {
                     expressionEvaluate = new ExpressionEvaluate(expression);
                     System.out.println("The answer is: " + expressionEvaluate.getAnswer().toPlainString());
@@ -32,9 +36,8 @@ public class WolframAlpha {
             } catch (InvalidExpression invalidExpression) {
                 System.out.println(invalidExpression.getMessage());
             }
-            System.out.println("Do you want evaluate another expression?");
-            answer = scanner.nextLine();
-        } while (answer.toLowerCase().equals("y"));
+        }
+        System.out.println("Exiting...");
     }
 
     /**
@@ -49,7 +52,7 @@ public class WolframAlpha {
      * @return Either an expression or the true value. No false value is given since it will throw an exception in that case
      * @throws InvalidExpression Expression highlighting what is wrong with the input. Usually a mismatch of the parenthesis
      */
-    private static boolean checkValidExpression(String expression) throws InvalidExpression {
+    private static boolean checkParenthesisExpression(String expression) throws InvalidExpression {
         Stack<String> strings = new Stack<>();
         String currentLetter;
         for (int i = 0; i < expression.length(); i++) {
@@ -58,22 +61,30 @@ public class WolframAlpha {
                 strings.add(currentLetter);
             } else if (END.contains(currentLetter)) {
                 if (strings.empty()) {
-                    throw new InvalidExpression("Unable to evaluate expression: No front matching parenthesis");
+                    throw new InvalidExpression("Error: Unable to evaluate expression: No front matching parenthesis");
                 } else {
                     if (strings.peek().equals("(") && !currentLetter.equals(")")) {
-                        throw new InvalidExpression("Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
+                        throw new InvalidExpression("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
                     } else if (strings.peek().equals("{") && !currentLetter.equals("}")) {
-                        throw new InvalidExpression("Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
+                        throw new InvalidExpression("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
                     } else if (strings.peek().equals("[") && !currentLetter.equals("]")) {
-                        throw new InvalidExpression("Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
+                        throw new InvalidExpression("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
                     }
                 }
                 strings.pop();
             }
         }
         if (!strings.empty()) {
-            throw new InvalidExpression("Unable to evaluate expression: Left over parenthesis.");
+            throw new InvalidExpression("Error: Unable to evaluate expression: Left over parenthesis.");
         }
         return true;
+    }
+
+    public static boolean checkLetEqualityExpression(String expression) throws InvalidExpression {
+        if (expression.contains("=") && expression.contains("let")) {
+            return true;
+        } else {
+            throw  new InvalidExpression("Error: To assign a variable you must use let bindings");
+        }
     }
 }

@@ -95,10 +95,6 @@ public enum Trigonometry {
         }
     };
 
-    Trigonometry() {
-
-    }
-
     /**
      * For each of the Trig Function is gets the trig values
      * Converts the decimal into radians then evaluates
