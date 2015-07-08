@@ -18,7 +18,7 @@ import java.math.BigDecimal;
  *         6. BitWise Operations (|, &, ^)
  *         7. Logical Operations (&&, ||)
  *         8. Conditional Operation ((True/False Expression) ? TrueCase : FalseCase)
- *         9. Assignment (=)
+ *         9. Assignment (=): Using let bindings
  *         <p>
  *         Then is is all evaluated in ExpressionEvalute/Operation.java
  */
@@ -47,7 +47,7 @@ public class ExpressionEvaluate {
      * @return The answer that the tree gives
      */
     public BigDecimal evaluate(ListIterator iterator) {
-        Node node = handleAssignment(iterator);             //Remove cases where there are lots of 0's
+        Node node = handleConditional(iterator);             //Remove cases where there are lots of 0's
         return node.evaluate(tree).stripTrailingZeros();    //e.g. 595 / 34 = 17.5000000000000000 -> becomes 17.5
     }
 
@@ -56,7 +56,6 @@ public class ExpressionEvaluate {
      *
      * @param iterator Iterator to iterate through the list of tokens at the correct spot
      * @return The root of the node that the other nodes are built around
-     */
     private Node handleAssignment(ListIterator iterator) {
         Node node = handleConditional(iterator);
         if (iterator.tokenChar() == '=') {
@@ -65,7 +64,7 @@ public class ExpressionEvaluate {
             node = new Operation(node, token.tokenText(), handleConditional(iterator));
         }
         return node;
-    }
+    }*/
 
     /**
      * Checks for the conditional operator by checking for the question mark.
@@ -223,7 +222,8 @@ public class ExpressionEvaluate {
     private Node handleParenthesis(ListIterator iterator) {
         if (iterator.tokenChar() == '(' || iterator.tokenChar() == '{' || iterator.tokenChar() == '[') {
             iterator.advance();
-            Node node = handleAssignment(iterator);
+            Node node = handleConditional(iterator);
+//            Node node = handleAssignment(iterator);
             if (iterator.tokenChar() == ')' || iterator.tokenChar() == '}' || iterator.tokenChar() == ']') {
                 iterator.advance();
             }
@@ -237,8 +237,11 @@ public class ExpressionEvaluate {
             return new Value(decimal);
         } else if (iterator.getToken().tokenText().equals("let")) {
             iterator.advance();
-            Node node = handleAssignment(iterator);
-            return node;
+            Node variableName = new Variable(iterator.getToken().tokenText());
+            iterator.advance();
+            iterator.advance();
+            Node operation = new Operation(variableName, "=", handleConditional(iterator));
+            return operation;
         } else if (iterator.getToken().tokenText().length() >= 1) {         //Must be a variable name
             Node node = new Variable(iterator.getToken().tokenText());
             iterator.advance();
