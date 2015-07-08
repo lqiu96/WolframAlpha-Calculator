@@ -1,7 +1,11 @@
+package Expression;
+
 import ExpressionList.ListIterator;
 import ExpressionList.Token;
 import ExpressionList.TokenList;
 import ExpressionNodes.*;
+import Math.Trigonometry;
+import Math.Constants;
 
 import java.math.BigDecimal;
 
@@ -234,6 +238,9 @@ public class ExpressionEvaluate {
         } else if (isTrig(iterator.getToken().tokenText())) {               //Check if it is a trig function
             BigDecimal decimal = handleTrig(iterator);
             return new Value(decimal);
+        } else if (isMathConstants(iterator.getToken().tokenText())) {
+            BigDecimal decimal = handleConstants(iterator);
+            return new Value(decimal);
         } else if (iterator.getToken().tokenText().equals("let")) {
             iterator.advance();
             Node variableName = new Variable(iterator.getToken().tokenText());
@@ -249,9 +256,31 @@ public class ExpressionEvaluate {
         }
     }
 
+    private BigDecimal handleConstants(ListIterator iterator) {
+        String constant = iterator.getToken().tokenText();
+        iterator.advance();
+        Constants[] mathConstants = Constants.values();
+        for (Constants constants : mathConstants) {
+            if (constant.toLowerCase().equals(constants.toString().toLowerCase())) {    //Matches Pi/pI with PI
+                return constants.getValue();
+            }
+        }
+        return null;    //Should never happen
+    }
+
+    private boolean isMathConstants(String constant) {
+        Constants[] mathConstants = Constants.values();
+        for (Constants constants : mathConstants) {
+            if (constant.toLowerCase().equals(constants.toString().toLowerCase())) {    //Matches Pi/pI with PI
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * It gets the trig function and determines the inside bit of which the trig function will call it on
-     * To evaluated the insdie, it calls a new ExpressionEvaluate object and evalutes the inside that way
+     * To evaluated the inside, it calls a new Expression.ExpressionEvaluate object and evalutes the inside that way
      * <p>
      * P.S. The inputted angle should be in degrees since each of the Trig enums convert the BigDecimal
      * parameter they get to radians.
