@@ -39,7 +39,7 @@ public class TokenList {
      * Creates a list of tokens to be evaluated.
      * Tokens either store:
      * -Operand
-     * -Variable
+     * -Variable (or if 'let')
      * -Value
      * -Other (Parenthesis)
      *

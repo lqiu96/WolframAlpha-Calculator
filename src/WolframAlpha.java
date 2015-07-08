@@ -16,7 +16,7 @@ public class WolframAlpha {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ExpressionEvaluate expressionEvaluate;
+        ExpressionEvaluate expressionEvaluate = new ExpressionEvaluate();
         Scanner scanner = new Scanner(System.in);
         String expression;
         System.out.println("Type end to exit out of the application");
@@ -27,10 +27,10 @@ public class WolframAlpha {
                 break;
             }
             try {
-                boolean valid = checkParenthesisExpression(expression)
-                        && checkLetEqualityExpression(expression);
-                if (valid) {
-                    expressionEvaluate = new ExpressionEvaluate(expression);
+                if (expression.length() == 0) {
+                    System.out.println("Error: No expression entered");
+                } else if (checkParenthesisExpression(expression) && checkLetEqualityExpression(expression)) {
+                    expressionEvaluate.setExpression(expression);
                     System.out.println("The answer is: " + expressionEvaluate.getAnswer().toPlainString());
                 }
             } catch (InvalidExpression invalidExpression) {
@@ -83,8 +83,10 @@ public class WolframAlpha {
     public static boolean checkLetEqualityExpression(String expression) throws InvalidExpression {
         if (expression.contains("=") && expression.contains("let")) {
             return true;
+        } else if (!expression.contains("=") && !expression.contains("let")) {
+            return true;
         } else {
-            throw  new InvalidExpression("Error: To assign a variable you must use let bindings");
+            throw new InvalidExpression("Error: To assign a variable you must use let bindings");
         }
     }
 }

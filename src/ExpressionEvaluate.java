@@ -29,15 +29,10 @@ public class ExpressionEvaluate {
     private String expression;
     private BigDecimal answer;              //Unfortunately not the fastest, but it's necessary for calculating floating
 
-    /**
-     * Creates a list of ExpressionList.Token objects to iterate through and evaluate
-     *
-     * @param expression String that contains a valid expression to be evaluated
-     */
-    public ExpressionEvaluate(String expression) {
+    public void setExpression(String expression) {
         this.expression = expression;
-        tokenList = new TokenList(expression);
-        listIterator = tokenList.begin();
+        this.tokenList = new TokenList(expression);
+        this.listIterator = tokenList.begin();
     }
 
     /**
@@ -272,7 +267,8 @@ public class ExpressionEvaluate {
         String trig = iterator.getToken().tokenText().toLowerCase();
         iterator.advance();
         String subExpression = findEvaluatedTrig(iterator);
-        ExpressionEvaluate subEvaluated = new ExpressionEvaluate(subExpression);
+        ExpressionEvaluate subEvaluated = new ExpressionEvaluate();
+        subEvaluated.setExpression(subExpression);
         Node node = new Value(subEvaluated.getAnswer());
         Trigonometry trigUsed = null;
         Trigonometry[] allTrigValues = Trigonometry.values();

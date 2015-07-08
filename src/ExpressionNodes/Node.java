@@ -8,5 +8,5 @@ import ExpressionVariables.VariableTree;
  * @author Lawrence
  */
 public interface Node {
-    BigDecimal evaluate(VariableTree tree); //Keyword Public would be redundant for interface methods
+    BigDecimal evaluate(VariableTree tree);
 }
