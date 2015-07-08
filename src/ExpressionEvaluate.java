@@ -2,7 +2,6 @@ import ExpressionList.ListIterator;
 import ExpressionList.Token;
 import ExpressionList.TokenList;
 import ExpressionNodes.*;
-import ExpressionVariables.VariableTree;
 
 import java.math.BigDecimal;
 
@@ -23,11 +22,16 @@ import java.math.BigDecimal;
  *         Then is is all evaluated in ExpressionEvalute/Operation.java
  */
 public class ExpressionEvaluate {
-    private static VariableTree tree = new VariableTree();
+    private VariableMap<String, BigDecimal> variableMap;
+//    private static VariableTree tree = new VariableTree();
     private TokenList tokenList;
     private ListIterator listIterator;
     private String expression;
     private BigDecimal answer;              //Unfortunately not the fastest, but it's necessary for calculating floating
+
+    public ExpressionEvaluate(VariableMap<String, BigDecimal> variableMap) {
+        this.variableMap = variableMap;
+    }
 
     public void setExpression(String expression) {
         this.expression = expression;
@@ -41,9 +45,9 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens at the correct spot
      * @return The answer that the tree gives
      */
-    public BigDecimal evaluate(ListIterator iterator) {
+    public BigDecimal evaluate(ListIterator iterator) throws Exception {
         Node node = handleConditional(iterator);             //Remove cases where there are lots of 0's
-        return node.evaluate(tree).stripTrailingZeros();    //e.g. 595 / 34 = 17.5000000000000000 -> becomes 17.5
+        return node.evaluate(variableMap).stripTrailingZeros();    //e.g. 595 / 34 = 17.5000000000000000 -> becomes 17.5
     }
 
     /**
@@ -68,7 +72,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens at the correct spot.
      * @return The root of the tree in which all the other nodes are build around
      */
-    private Node handleConditional(ListIterator iterator) {
+    private Node handleConditional(ListIterator iterator) throws Exception {
         Node node = handleLogicalOperators(iterator);
         if (iterator.tokenChar() == '?') {
             iterator.advance();
@@ -88,7 +92,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens
      * @return Root of tree in which all other nodes are build around
      */
-    private Node handleLogicalOperators(ListIterator iterator) {
+    private Node handleLogicalOperators(ListIterator iterator) throws Exception {
         Node node = handleBitWiseOperations(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals("||") || iterator.getToken().tokenText().equals("&&"))) {
@@ -107,7 +111,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator which iterates through the list of tokens to the correct spot
      * @return Root of the newly added tree
      */
-    private Node handleBitWiseOperations(ListIterator iterator) {
+    private Node handleBitWiseOperations(ListIterator iterator) throws Exception {
         Node node = handleRelational(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals("|") || iterator.getToken().tokenText().equals("&")
@@ -128,7 +132,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator which iterates through the list of tokens at the correct spot
      * @return Root of the newly added tree
      */
-    private Node handleRelational(ListIterator iterator) {
+    private Node handleRelational(ListIterator iterator) throws Exception {
         Node node = handleBitShift(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals(">") || iterator.getToken().tokenText().equals("<")
@@ -149,7 +153,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator which goes through the expression
      * @return Either the node that contains the operation or null
      */
-    private Node handleBitShift(ListIterator iterator) {
+    private Node handleBitShift(ListIterator iterator) throws Exception {
         Node node = handleAddSub(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals(">>") || iterator.getToken().tokenText().equals("<<"))) {
@@ -168,7 +172,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to pass through the list of tokens at the correct spot
      * @return New root built and all the nodes that built around it
      */
-    private Node handleAddSub(ListIterator iterator) {
+    private Node handleAddSub(ListIterator iterator) throws Exception {
         Node node = handleOperations(iterator);
         while (iterator.tokenChar() != 0 && (iterator.getToken().tokenText().equals("+") || iterator.getToken().tokenText().equals("-"))) {
             Token operation = iterator.getToken();
@@ -190,7 +194,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens at the corret spot
      * @return Newly formed tree and returns the root
      */
-    private Node handleOperations(ListIterator iterator) {
+    private Node handleOperations(ListIterator iterator) throws Exception {
         Node node = handleParenthesis(iterator);
         while (iterator.tokenChar() != 0 && (iterator.getToken().tokenText().equals("*")
                 || iterator.getToken().tokenText().equals("/") || iterator.getToken().tokenText().equals("%"))) {
@@ -214,7 +218,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens at the corret spot
      * @return The Node which other nodes will be built around
      */
-    private Node handleParenthesis(ListIterator iterator) {
+    private Node handleParenthesis(ListIterator iterator) throws Exception {
         if (iterator.tokenChar() == '(' || iterator.tokenChar() == '{' || iterator.tokenChar() == '[') {
             iterator.advance();
             Node node = handleConditional(iterator);
@@ -235,8 +239,7 @@ public class ExpressionEvaluate {
             Node variableName = new Variable(iterator.getToken().tokenText());
             iterator.advance();
             iterator.advance();
-            Node operation = new Operation(variableName, "=", handleConditional(iterator));
-            return operation;
+            return new Operation(variableName, "=", handleConditional(iterator));
         } else if (iterator.getToken().tokenText().length() >= 1) {         //Must be a variable name
             Node node = new Variable(iterator.getToken().tokenText());
             iterator.advance();
@@ -263,11 +266,11 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to go through the expression
      * @return BigDecimal object that contains the correct value
      */
-    private BigDecimal handleTrig(ListIterator iterator) {
+    private BigDecimal handleTrig(ListIterator iterator) throws Exception {
         String trig = iterator.getToken().tokenText().toLowerCase();
         iterator.advance();
         String subExpression = findEvaluatedTrig(iterator);
-        ExpressionEvaluate subEvaluated = new ExpressionEvaluate();
+        ExpressionEvaluate subEvaluated = new ExpressionEvaluate(variableMap);
         subEvaluated.setExpression(subExpression);
         Node node = new Value(subEvaluated.getAnswer());
         Trigonometry trigUsed = null;
@@ -278,7 +281,7 @@ public class ExpressionEvaluate {
                 break;      //Once finds correct trig function, stops looking through all of them
             }
         }
-        return trigUsed.getTrigValue(node.evaluate(tree));      //Refer to JavaDoc if Intellij shows that it will be null
+        return trigUsed.getTrigValue(node.evaluate(variableMap));      //Refer to JavaDoc if Intellij shows that it will be null
     }
 
     /**
@@ -335,7 +338,7 @@ public class ExpressionEvaluate {
      *
      * @return The integer value of the expression
      */
-    public BigDecimal getAnswer() {
+    public BigDecimal getAnswer() throws Exception {
         answer = evaluate(listIterator);
         return answer;
     }

@@ -1,12 +1,9 @@
 package ExpressionNodes;
 
 import java.math.BigDecimal;
-
-import ExpressionVariables.VariableTree;
-
 /**
  * @author Lawrence
  */
 public interface Node {
-    BigDecimal evaluate(VariableTree tree);
+    BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws Exception;
 }

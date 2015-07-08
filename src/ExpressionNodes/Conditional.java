@@ -2,8 +2,6 @@ package ExpressionNodes;
 
 import java.math.BigDecimal;
 
-import ExpressionVariables.VariableTree;
-
 /**
  * @author Lawrence
  */
@@ -28,14 +26,14 @@ public class Conditional implements Node {
     /**
      * Determines which case to evaluated
      *
-     * @param tree Variable tree to help with the cases to be evaluated
+     * @param map Variable tree to help with the cases to be evaluated
      * @return Value of the expression
      */
-    public BigDecimal evaluate(VariableTree tree) {
-        if (test.evaluate(tree).compareTo(new BigDecimal(1)) == 0) {
-            return trueCase.evaluate(tree);
+    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws Exception {
+        if (test.evaluate(map).compareTo(new BigDecimal(1)) == 0) {
+            return trueCase.evaluate(map);
         } else {
-            return falseCase.evaluate(tree);
+            return falseCase.evaluate(map);
         }
     }
 

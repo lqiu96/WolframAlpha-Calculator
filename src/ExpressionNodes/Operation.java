@@ -3,8 +3,6 @@ package ExpressionNodes;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import ExpressionVariables.VariableTree;
-
 /**
  * @author Lawrence
  */
@@ -29,50 +27,50 @@ public class Operation implements Node {
     /**
      * Evaluates the expression
      *
-     * @param tree Checks to help evaluated variables
+     * @param map Checks to help evaluated variables
      * @return Evaluated expression
      */
-    public BigDecimal evaluate(VariableTree tree) {
+    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws Exception {
         switch (operation) {
             case "+":
-                return left.evaluate(tree).add(right.evaluate(tree));
+                return left.evaluate(map).add(right.evaluate(map));
             case "-":
-                return left.evaluate(tree).subtract(right.evaluate(tree));
+                return left.evaluate(map).subtract(right.evaluate(map));
             case "*":
-                return left.evaluate(tree).multiply(right.evaluate(tree));
+                return left.evaluate(map).multiply(right.evaluate(map));
             case "/":
-                return left.evaluate(tree).divide(right.evaluate(tree), 25, RoundingMode.HALF_UP);
+                return left.evaluate(map).divide(right.evaluate(map), 25, RoundingMode.HALF_UP);
             case "%":
-                return new BigDecimal(left.evaluate(tree).intValue() % right.evaluate(tree).intValue());  //Modulus only applies to integer values
+                return new BigDecimal(left.evaluate(map).intValue() % right.evaluate(map).intValue());  //Modulus only applies to integer values
             case ">>":
-                return new BigDecimal(left.evaluate(tree).intValue() >> right.evaluate(tree).intValue());   //The following bitwise operations are also integer only
+                return new BigDecimal(left.evaluate(map).intValue() >> right.evaluate(map).intValue());   //The following bitwise operations are also integer only
             case "<<":
-                return new BigDecimal(left.evaluate(tree).intValue() << right.evaluate(tree).intValue());
+                return new BigDecimal(left.evaluate(map).intValue() << right.evaluate(map).intValue());
             case "|":
-                return new BigDecimal(left.evaluate(tree).intValue() | right.evaluate(tree).intValue());
+                return new BigDecimal(left.evaluate(map).intValue() | right.evaluate(map).intValue());
             case "&":
-                return new BigDecimal(left.evaluate(tree).intValue() & right.evaluate(tree).intValue());
+                return new BigDecimal(left.evaluate(map).intValue() & right.evaluate(map).intValue());
             case "^":
-                return new BigDecimal(left.evaluate(tree).intValue() ^ right.evaluate(tree).intValue());
+                return new BigDecimal(left.evaluate(map).intValue() ^ right.evaluate(map).intValue());
             case ">":
-                return (left.evaluate(tree).compareTo(right.evaluate(tree))) > 0 ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).compareTo(right.evaluate(map))) > 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "<":
-                return (left.evaluate(tree).compareTo(right.evaluate(tree))) < 0 ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).compareTo(right.evaluate(map))) < 0 ? new BigDecimal(1) : new BigDecimal(0);
             case ">=":
-                return (left.evaluate(tree).compareTo(right.evaluate(tree))) >= 0 ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).compareTo(right.evaluate(map))) >= 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "<=":
-                return (left.evaluate(tree).compareTo(right.evaluate(tree))) <= 0 ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).compareTo(right.evaluate(map))) <= 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "!=":
-                return (left.evaluate(tree).compareTo(right.evaluate(tree))) != 0 ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).compareTo(right.evaluate(map))) != 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "==":
-                return (left.evaluate(tree).compareTo(right.evaluate(tree))) == 0 ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).compareTo(right.evaluate(map))) == 0 ? new BigDecimal(1) : new BigDecimal(0);
             case "||":
-                return (left.evaluate(tree).doubleValue() != 0 || right.evaluate(tree).doubleValue() != 0) ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).doubleValue() != 0 || right.evaluate(map).doubleValue() != 0) ? new BigDecimal(1) : new BigDecimal(0);
             case "&&":
-                return (left.evaluate(tree).doubleValue() != 0 && right.evaluate(tree).doubleValue() != 0) ? new BigDecimal(1) : new BigDecimal(0);
+                return (left.evaluate(map).doubleValue() != 0 && right.evaluate(map).doubleValue() != 0) ? new BigDecimal(1) : new BigDecimal(0);
             case "=":
-                tree.assign(((Variable) left).getName(), right.evaluate(tree));
-                return tree.lookup(((Variable) left).getName());
+                map.add(((Variable) left).getName(), right.evaluate(map));
+                return map.get(((Variable) left).getName());
             default:
                 return new BigDecimal(0);
         }

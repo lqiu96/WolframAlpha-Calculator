@@ -2,8 +2,6 @@ package ExpressionNodes;
 
 import java.math.BigDecimal;
 
-import ExpressionVariables.VariableTree;
-
 /**
  * @author Lawrence
  */
@@ -26,11 +24,11 @@ public class Variable implements Node {
     /**
      * Evaluates the tree
      *
-     * @param tree Where the variable name is stored
+     * @param map Where the variable name is stored
      * @return Value associated with the variable name
      */
-    public BigDecimal evaluate(VariableTree tree) {
-        return tree.lookup(name);
+    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws Exception {
+        return map.get(name);
     }
 
     /**

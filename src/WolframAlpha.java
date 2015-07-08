@@ -1,3 +1,6 @@
+import ExpressionNodes.VariableMap;
+
+import java.math.BigDecimal;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -16,15 +19,20 @@ public class WolframAlpha {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ExpressionEvaluate expressionEvaluate = new ExpressionEvaluate();
+        final VariableMap<String, BigDecimal> variableMap = new VariableMap<>();
+        final ExpressionEvaluate expressionEvaluate = new ExpressionEvaluate(variableMap);
         Scanner scanner = new Scanner(System.in);
         String expression;
-        System.out.println("Type end to exit out of the application");
+        System.out.println("Type 'end' to exit out of the application");
+        System.out.println("Type 'list' to view all the variable bindings set");
         System.out.println("Enter an expression to evaluate: ");
-        while (true) {
+        while (true) {      //Continues forever, until the user enters 'end'
             expression = scanner.nextLine();
             if (expression.toLowerCase().equals("end")) {
                 break;
+            } else if (expression.toLowerCase().equals("list")) {
+                System.out.println(variableMap);
+                continue;
             }
             try {
                 if (expression.length() == 0) {
@@ -33,8 +41,8 @@ public class WolframAlpha {
                     expressionEvaluate.setExpression(expression);
                     System.out.println("The answer is: " + expressionEvaluate.getAnswer().toPlainString());
                 }
-            } catch (InvalidExpression invalidExpression) {
-                System.out.println(invalidExpression.getMessage());
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
             }
         }
         System.out.println("Exiting...");
@@ -50,9 +58,9 @@ public class WolframAlpha {
      *
      * @param expression Inputted expression that must be evaluated
      * @return Either an expression or the true value. No false value is given since it will throw an exception in that case
-     * @throws InvalidExpression Expression highlighting what is wrong with the input. Usually a mismatch of the parenthesis
+     * @throws InvalidExpressionException Expression highlighting what is wrong with the input. Usually a mismatch of the parenthesis
      */
-    private static boolean checkParenthesisExpression(String expression) throws InvalidExpression {
+    private static boolean checkParenthesisExpression(String expression) throws InvalidExpressionException {
         Stack<String> strings = new Stack<>();
         String currentLetter;
         for (int i = 0; i < expression.length(); i++) {
@@ -61,32 +69,32 @@ public class WolframAlpha {
                 strings.add(currentLetter);
             } else if (END.contains(currentLetter)) {
                 if (strings.empty()) {
-                    throw new InvalidExpression("Error: Unable to evaluate expression: No front matching parenthesis");
+                    throw new InvalidExpressionException("Error: Unable to evaluate expression: No front matching parenthesis");
                 } else {
                     if (strings.peek().equals("(") && !currentLetter.equals(")")) {
-                        throw new InvalidExpression("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
+                        throw new InvalidExpressionException("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
                     } else if (strings.peek().equals("{") && !currentLetter.equals("}")) {
-                        throw new InvalidExpression("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
+                        throw new InvalidExpressionException("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
                     } else if (strings.peek().equals("[") && !currentLetter.equals("]")) {
-                        throw new InvalidExpression("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
+                        throw new InvalidExpressionException("Error: Unable to evaluate expression: Mismatched parenthesis: " + currentLetter);
                     }
                 }
                 strings.pop();
             }
         }
         if (!strings.empty()) {
-            throw new InvalidExpression("Error: Unable to evaluate expression: Left over parenthesis.");
+            throw new InvalidExpressionException("Error: Unable to evaluate expression: Left over parenthesis.");
         }
         return true;
     }
 
-    public static boolean checkLetEqualityExpression(String expression) throws InvalidExpression {
+    public static boolean checkLetEqualityExpression(String expression) throws InvalidExpressionException {
         if (expression.contains("=") && expression.contains("let")) {
             return true;
         } else if (!expression.contains("=") && !expression.contains("let")) {
             return true;
         } else {
-            throw new InvalidExpression("Error: To assign a variable you must use let bindings");
+            throw new InvalidExpressionException("Error: To assign a variable you must use let bindings");
         }
     }
 }
