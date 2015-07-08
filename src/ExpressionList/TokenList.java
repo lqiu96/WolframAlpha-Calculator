@@ -60,16 +60,22 @@ public class TokenList {
                 double num = Double.parseDouble(number);
                 Token token = new Token(new BigDecimal(num));
                 pushBack(token);
-            } else if (Character.isLetter(expression.charAt(i))) {  //Checks if it is a letter
-                String variable = "";                               //Adds in letters to form variables
-                variable += expression.charAt(i);
-                i++;
-                while (i < expression.length() && Character.isLetter(expression.charAt(i))) {
+            } else if (Character.isLetter(expression.charAt(i))) {  //Checks if it is a
+                if (expression.charAt(i) == 'l' && expression.charAt(i+1) == 'e' && expression.charAt(i+2) == 't') {
+                    i += 3;
+                    Token token = new Token("let");
+                    pushBack(token);
+                } else {
+                    String variable = "";
                     variable += expression.charAt(i);
                     i++;
+                    while (i < expression.length() && Character.isLetter(expression.charAt(i))) {
+                        variable += expression.charAt(i);
+                        i++;
+                    }
+                    Token token = new Token(variable);
+                    pushBack(token);
                 }
-                Token token = new Token(variable);
-                pushBack(token);
             } else if (!Character.isSpaceChar(expression.charAt(i))) {      //If not letter or number
                 String s = "";                                              //Must be operator or parenthesis or period
                 s += expression.charAt(i);
@@ -142,24 +148,6 @@ public class TokenList {
         } else {
             tail.setNext(element);
             tail = element;
-        }
-    }
-
-    /**
-     * Adds the token to the front of the list
-     * Implementations differ if the list is empty
-     *
-     * @param token ExpressionList.Token to be pushed to the front of the list
-     */
-    public void pushFront(Token token) {
-        ListElement element = new ListElement();
-        element.setToken(token);
-        element.setNext(head);
-        if (isEmpty()) {
-            head = element;
-            tail = element;
-        } else {
-            head = element;
         }
     }
 

@@ -6,7 +6,6 @@ import java.math.BigDecimal;
  * @author Lawrence
  */
 public class TreeNode {
-    private boolean isValid;
     private String name;
     private BigDecimal value;
     private TreeNode left;
@@ -20,21 +19,16 @@ public class TreeNode {
      * @param val     Sets the node's value
      */
     public TreeNode(String newName, BigDecimal val) {
-        isValid = false;
         name = newName;
         value = val;
         left = null;
         right = null;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     /**
      * Gives back the name of the node
      *
-     * @return The variable's name
+     * @return The variables name
      */
     public String getName() {
         return name;
@@ -76,10 +70,6 @@ public class TreeNode {
         this.value = value;
     }
 
-    public boolean isValid() {
-        return isValid;
-    }
-
     /**
      * Prints out the Node and its siblings
      *
@@ -104,5 +94,9 @@ public class TreeNode {
 
     public void setRight(TreeNode right) {
         this.right = right;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

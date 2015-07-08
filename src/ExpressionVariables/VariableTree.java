@@ -12,7 +12,7 @@ public class VariableTree {
      * By Default set's the root to be null
      */
     public VariableTree() {
-        root = new TreeNode(null, null);
+        root = new TreeNode(null, new BigDecimal(0));
     }
 
     /**
@@ -49,7 +49,7 @@ public class VariableTree {
     private TreeNode recursiveSearch(String name) {
         TreeNode node = root;
         while (true) {
-            if (!node.isValid()) {
+            if (node.getName() == null) {
                 node.setName(name);
                 return node;
             }
@@ -57,12 +57,12 @@ public class VariableTree {
                 return node;
             } else if (name.compareTo(node.getName()) < 0) {
                 if (node.getLeft() == null) {
-                    node.setLeft(new TreeNode(null, null));
+                    node.setLeft(new TreeNode(null, new BigDecimal(0)));
                 }
                 node = node.getLeft();
             } else {
                 if (node.getRight() == null) {
-                    node.setRight(new TreeNode(null, null));
+                    node.setRight(new TreeNode(null, new BigDecimal(0)));
                 }
                 node = node.getRight();
             }

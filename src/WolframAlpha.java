@@ -17,6 +17,10 @@ public class WolframAlpha {
      */
     public static void main(String[] args) {
         ExpressionEvaluate expressionEvaluate;
+        expressionEvaluate = new ExpressionEvaluate("let a = 5");
+        System.out.println(expressionEvaluate.getAnswer().toPlainString());
+        expressionEvaluate = new ExpressionEvaluate("b");
+        System.out.println(expressionEvaluate.getAnswer().toPlainString());
         Scanner scanner;
         String answer, expression;
         do {

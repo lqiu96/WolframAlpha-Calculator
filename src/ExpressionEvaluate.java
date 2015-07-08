@@ -1,37 +1,33 @@
 import ExpressionList.ListIterator;
 import ExpressionList.Token;
 import ExpressionList.TokenList;
-import ExpressionNodes.Node;
-import ExpressionNodes.Variable;
-import ExpressionNodes.Value;
-import ExpressionNodes.Conditional;
-import ExpressionNodes.Operation;
+import ExpressionNodes.*;
 import ExpressionVariables.VariableTree;
 
 import java.math.BigDecimal;
 
 /**
  * @author Lawrence
- * Expression is evaluated in a Recursive Descent Parsing method
- * In terms of order of operations:
- * 1. Parenthesis, Variables, Trig Expressions
- * 2. Operations (*, /, %)
- * 3. Addition and Subtraction
- * 4. Shifting Bits (>>, <<)
- * 5. Relational Operations (>, <, >=, <=, ==, !=)
- * 6. BitWise Operations (|, &, ^)
- * 7. Logical Operations (&&, ||)
- * 8. Conditional Operation ((True/False Expression) ? TrueCase : FalseCase)
- * 9. Assignment (=)
- *
- * Then is is all evaluated in ExpressionEvalute/Operation.java
+ *         Expression is evaluated in a Recursive Descent Parsing method
+ *         In terms of order of operations:
+ *         1. Parenthesis, Variables, Trig Expressions
+ *         2. Operations (*, /, %)
+ *         3. Addition and Subtraction
+ *         4. Shifting Bits (>>, <<)
+ *         5. Relational Operations (>, <, >=, <=, ==, !=)
+ *         6. BitWise Operations (|, &, ^)
+ *         7. Logical Operations (&&, ||)
+ *         8. Conditional Operation ((True/False Expression) ? TrueCase : FalseCase)
+ *         9. Assignment (=)
+ *         <p>
+ *         Then is is all evaluated in ExpressionEvalute/Operation.java
  */
 public class ExpressionEvaluate {
-    private static VariableTree tree = new VariableTree();      //Instead of each expression having its own VariableTree
-    private TokenList tokenList;                                //Every expression now has this unique variable tree
+    private static VariableTree tree = new VariableTree();
+    private TokenList tokenList;
+    private ListIterator listIterator;
     private String expression;
     private BigDecimal answer;              //Unfortunately not the fastest, but it's necessary for calculating floating
-                                            //point numbers and such
 
     /**
      * Creates a list of ExpressionList.Token objects to iterate through and evaluate
@@ -41,8 +37,7 @@ public class ExpressionEvaluate {
     public ExpressionEvaluate(String expression) {
         this.expression = expression;
         tokenList = new TokenList(expression);
-        ListIterator listIterator = tokenList.begin();
-        answer = evaluate(listIterator);
+        listIterator = tokenList.begin();
     }
 
     /**
@@ -95,6 +90,7 @@ public class ExpressionEvaluate {
     /**
      * Checks the expression for logical operations dealing with Or and And
      * Expressions to the left and right that are evaluated as Not 0 are True and 0 as False
+     *
      * @param iterator Iterator to iterate through the list of tokens
      * @return Root of tree in which all other nodes are build around
      */
@@ -232,13 +228,17 @@ public class ExpressionEvaluate {
                 iterator.advance();
             }
             return node;
-        } else if (iterator.currentIsInteger()) {
+        } else if (iterator.currentIsInteger()) {                           //Must be a number
             Node node = new Value(iterator.value());
             iterator.advance();
             return node;
-        } else if (isTrig(iterator.getToken().tokenText())) {
+        } else if (isTrig(iterator.getToken().tokenText())) {               //Check if it is a trig function
             BigDecimal decimal = handleTrig(iterator);
             return new Value(decimal);
+        } else if (iterator.getToken().tokenText().equals("let")) {
+            iterator.advance();
+            Node node = handleAssignment(iterator);
+            return node;
         } else if (iterator.getToken().tokenText().length() >= 1) {         //Must be a variable name
             Node node = new Variable(iterator.getToken().tokenText());
             iterator.advance();
@@ -337,6 +337,7 @@ public class ExpressionEvaluate {
      * @return The integer value of the expression
      */
     public BigDecimal getAnswer() {
+        answer = evaluate(listIterator);
         return answer;
     }
 
