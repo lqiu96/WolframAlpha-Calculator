@@ -14,14 +14,15 @@ import java.math.BigDecimal;
  *         Expression is evaluated in a Recursive Descent Parsing method
  *         In terms of order of operations:
  *         1. Parenthesis, Variables, Trig Expressions
- *         2. Operations (*, /, %)
- *         3. Addition and Subtraction
- *         4. Shifting Bits (>>, <<)
- *         5. Relational Operations (>, <, >=, <=, ==, !=)
- *         6. BitWise Operations (|, &, ^)
- *         7. Logical Operations (&&, ||)
- *         8. Conditional Operation ((True/False Expression) ? TrueCase : FalseCase)
- *         9. Assignment (=): Using let bindings
+ *         2. Log
+ *         3. Operations (*, /, %)
+ *         4. Addition and Subtraction
+ *         5. Shifting Bits (>>, <<)
+ *         6. Relational Operations (>, <, >=, <=, ==, !=)
+ *         7. BitWise Operations (|, &, ^)
+ *         8. Logical Operations (&&, ||)
+ *         9. Conditional Operation ((True/False Expression) ? TrueCase : FalseCase)
+ *         10. Assignment (=): Using let bindings
  *         <p>
  *         Then is is all evaluated in ExpressionEvalute/Operation.java
  */
@@ -245,6 +246,15 @@ public class ExpressionEvaluate {
             iterator.advance();
             iterator.advance();
             return new Operation(variableName, "=", handleConditional(iterator));
+        } else if (iterator.getToken().tokenText().equals("log") || iterator.getToken().tokenText().equals("ln")) {
+            String log = iterator.getToken().tokenText();
+            iterator.advance();
+            String expression = findInnerExpression(iterator);
+            ExpressionEvaluate expressionEvaluate = new ExpressionEvaluate(variableMap);
+            expressionEvaluate.setExpression(expression);
+            Logarithmic node = (log.equals("ln")) ? new Logarithmic(expressionEvaluate.getAnswer()) :
+                    new Logarithmic(expressionEvaluate.getAnswer(), true);
+            return node;
         } else if (iterator.getToken().tokenText().length() >= 1) {         //Must be a variable name
             Node node = new Variable(iterator.getToken().tokenText());
             iterator.advance();
@@ -309,7 +319,7 @@ public class ExpressionEvaluate {
     private BigDecimal handleTrig(ListIterator iterator) throws InvalidExpressionException {
         String trig = iterator.getToken().tokenText().toLowerCase();
         iterator.advance();
-        String subExpression = findEvaluatedTrig(iterator);
+        String subExpression = findInnerExpression(iterator);
         ExpressionEvaluate subEvaluated = new ExpressionEvaluate(variableMap);
         subEvaluated.setExpression(subExpression);
         Node node = new Value(subEvaluated.getAnswer());
@@ -336,7 +346,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator which iterates through to find the parameters
      * @return String containing the inside parameters of the function
      */
-    private String findEvaluatedTrig(ListIterator iterator) {
+    private String findInnerExpression(ListIterator iterator) {
         String expression = "";
         if (iterator.tokenChar() == '(' || iterator.tokenChar() == '{' || iterator.tokenChar() == '[') {
             iterator.advance();
@@ -350,6 +360,9 @@ public class ExpressionEvaluate {
             }
             iterator.advance();
         } else {
+            if (isMathConstants(iterator.getToken().tokenText())) {
+                return handleConstants(iterator).toPlainString();
+            }
             expression += iterator.value().doubleValue() + " ";
             iterator.advance();
         }

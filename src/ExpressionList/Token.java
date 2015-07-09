@@ -66,12 +66,12 @@ public class Token {
     }
 
     /**
-     * Gives back the text
+     * Gives back the text (Lowercase)
      *
      * @return The text stored
      */
     public String tokenText() {
-        return text;
+        return text.toLowerCase();
     }
 
     /**
