@@ -1,5 +1,7 @@
 package ExpressionNodes;
 
+import Expression.InvalidExpressionException;
+
 import java.math.BigDecimal;
 
 /**
@@ -27,7 +29,7 @@ public class Variable implements Node {
      * @param map Where the variable name is stored
      * @return Value associated with the variable name
      */
-    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws Exception {
+    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws InvalidExpressionException {
         return map.get(name);
     }
 

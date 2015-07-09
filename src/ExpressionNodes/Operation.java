@@ -1,5 +1,7 @@
 package ExpressionNodes;
 
+import Expression.InvalidExpressionException;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -30,7 +32,7 @@ public class Operation implements Node {
      * @param map Checks to help evaluated variables
      * @return Evaluated expression
      */
-    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws Exception {
+    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws InvalidExpressionException {
         switch (operation) {
             case "+":
                 return left.evaluate(map).add(right.evaluate(map));

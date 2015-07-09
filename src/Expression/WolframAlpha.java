@@ -38,12 +38,12 @@ public class WolframAlpha {
             }
             try {
                 if (expression.length() == 0) {
-                    System.out.println("Error: No expression entered");
+                    throw new InvalidExpressionException("Error: No expression entered");
                 } else if (checkParenthesisExpression(expression) && checkLetEqualityExpression(expression)) {
                     expressionEvaluate.setExpression(expression);
                     System.out.println("The answer is: " + expressionEvaluate.getAnswer().toPlainString());
                 }
-            } catch (Exception exception) {
+            } catch (InvalidExpressionException exception) {
                 System.out.println(exception.getMessage());
             }
         }
@@ -90,6 +90,13 @@ public class WolframAlpha {
         return true;
     }
 
+    /**
+     * Checks to make sure that with each variable declaration you have a let binding with it
+     *
+     * @param expression To check if variable is assigned
+     * @return If each variable assigned has a let and '='
+     * @throws InvalidExpressionException If there is no let with the variable
+     */
     public static boolean checkLetEqualityExpression(String expression) throws InvalidExpressionException {
         if (expression.contains("=") && expression.contains("let")) {
             return true;

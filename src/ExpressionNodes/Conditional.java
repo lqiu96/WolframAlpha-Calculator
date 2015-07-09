@@ -1,5 +1,7 @@
 package ExpressionNodes;
 
+import Expression.InvalidExpressionException;
+
 import java.math.BigDecimal;
 
 /**
@@ -29,7 +31,7 @@ public class Conditional implements Node {
      * @param map Variable tree to help with the cases to be evaluated
      * @return Value of the expression
      */
-    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws Exception {
+    public BigDecimal evaluate(VariableMap<String, BigDecimal> map) throws InvalidExpressionException {
         if (test.evaluate(map).compareTo(new BigDecimal(1)) == 0) {
             return trueCase.evaluate(map);
         } else {

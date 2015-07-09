@@ -27,7 +27,6 @@ import java.math.BigDecimal;
  */
 public class ExpressionEvaluate {
     private VariableMap<String, BigDecimal> variableMap;
-//    private static VariableTree tree = new VariableTree();
     private TokenList tokenList;
     private ListIterator listIterator;
     private String expression;
@@ -49,7 +48,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens at the correct spot
      * @return The answer that the tree gives
      */
-    public BigDecimal evaluate(ListIterator iterator) throws Exception {
+    public BigDecimal evaluate(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleConditional(iterator);             //Remove cases where there are lots of 0's
         return node.evaluate(variableMap).stripTrailingZeros();    //e.g. 595 / 34 = 17.5000000000000000 -> becomes 17.5
     }
@@ -76,7 +75,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens at the correct spot.
      * @return The root of the tree in which all the other nodes are build around
      */
-    private Node handleConditional(ListIterator iterator) throws Exception {
+    private Node handleConditional(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleLogicalOperators(iterator);
         if (iterator.tokenChar() == '?') {
             iterator.advance();
@@ -96,7 +95,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens
      * @return Root of tree in which all other nodes are build around
      */
-    private Node handleLogicalOperators(ListIterator iterator) throws Exception {
+    private Node handleLogicalOperators(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleBitWiseOperations(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals("||") || iterator.getToken().tokenText().equals("&&"))) {
@@ -115,7 +114,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator which iterates through the list of tokens to the correct spot
      * @return Root of the newly added tree
      */
-    private Node handleBitWiseOperations(ListIterator iterator) throws Exception {
+    private Node handleBitWiseOperations(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleRelational(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals("|") || iterator.getToken().tokenText().equals("&")
@@ -136,7 +135,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator which iterates through the list of tokens at the correct spot
      * @return Root of the newly added tree
      */
-    private Node handleRelational(ListIterator iterator) throws Exception {
+    private Node handleRelational(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleBitShift(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals(">") || iterator.getToken().tokenText().equals("<")
@@ -157,7 +156,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator which goes through the expression
      * @return Either the node that contains the operation or null
      */
-    private Node handleBitShift(ListIterator iterator) throws Exception {
+    private Node handleBitShift(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleAddSub(iterator);
         while (iterator.tokenChar() != 0
                 && (iterator.getToken().tokenText().equals(">>") || iterator.getToken().tokenText().equals("<<"))) {
@@ -176,7 +175,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to pass through the list of tokens at the correct spot
      * @return New root built and all the nodes that built around it
      */
-    private Node handleAddSub(ListIterator iterator) throws Exception {
+    private Node handleAddSub(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleOperations(iterator);
         while (iterator.tokenChar() != 0 && (iterator.getToken().tokenText().equals("+") || iterator.getToken().tokenText().equals("-"))) {
             Token operation = iterator.getToken();
@@ -195,10 +194,10 @@ public class ExpressionEvaluate {
      * Handles the next order of operations which is multiplication, division, and modulo
      * Builds the tree this way
      *
-     * @param iterator Iterator to iterate through the list of tokens at the corret spot
+     * @param iterator Iterator to iterate through the list of tokens at the correct spot
      * @return Newly formed tree and returns the root
      */
-    private Node handleOperations(ListIterator iterator) throws Exception {
+    private Node handleOperations(ListIterator iterator) throws InvalidExpressionException {
         Node node = handleParenthesis(iterator);
         while (iterator.tokenChar() != 0 && (iterator.getToken().tokenText().equals("*")
                 || iterator.getToken().tokenText().equals("/") || iterator.getToken().tokenText().equals("%"))) {
@@ -222,11 +221,10 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to iterate through the list of tokens at the corret spot
      * @return The Node which other nodes will be built around
      */
-    private Node handleParenthesis(ListIterator iterator) throws Exception {
+    private Node handleParenthesis(ListIterator iterator) throws InvalidExpressionException {
         if (iterator.tokenChar() == '(' || iterator.tokenChar() == '{' || iterator.tokenChar() == '[') {
             iterator.advance();
             Node node = handleConditional(iterator);
-//            Node node = handleAssignment(iterator);
             if (iterator.tokenChar() == ')' || iterator.tokenChar() == '}' || iterator.tokenChar() == ']') {
                 iterator.advance();
             }
@@ -256,6 +254,13 @@ public class ExpressionEvaluate {
         }
     }
 
+    /**
+     * Iterate through the enums to check if any of the Mathmatical constants are used
+     * If it is use, it returns the value by BigDecimal
+     *
+     * @param iterator ListIterator through the expression
+     * @return BigDecimal representation of the value
+     */
     private BigDecimal handleConstants(ListIterator iterator) {
         String constant = iterator.getToken().tokenText();
         iterator.advance();
@@ -268,6 +273,12 @@ public class ExpressionEvaluate {
         return null;    //Should never happen
     }
 
+    /**
+     * Iterates through the enumeration to check if any of the enums are used
+     *
+     * @param constant Math representation of the constant
+     * @return Whether the string constant
+     */
     private boolean isMathConstants(String constant) {
         Constants[] mathConstants = Constants.values();
         for (Constants constants : mathConstants) {
@@ -295,7 +306,7 @@ public class ExpressionEvaluate {
      * @param iterator Iterator to go through the expression
      * @return BigDecimal object that contains the correct value
      */
-    private BigDecimal handleTrig(ListIterator iterator) throws Exception {
+    private BigDecimal handleTrig(ListIterator iterator) throws InvalidExpressionException {
         String trig = iterator.getToken().tokenText().toLowerCase();
         iterator.advance();
         String subExpression = findEvaluatedTrig(iterator);
@@ -367,7 +378,7 @@ public class ExpressionEvaluate {
      *
      * @return The integer value of the expression
      */
-    public BigDecimal getAnswer() throws Exception {
+    public BigDecimal getAnswer() throws InvalidExpressionException {
         answer = evaluate(listIterator);
         return answer;
     }
@@ -383,6 +394,6 @@ public class ExpressionEvaluate {
     public String toString() {
         return "The expression is: \n" + expression +
                 " and the tokens are split: \n" + tokenList +
-                " and the answer is: " + answer;
+                " and the answer is: " + ((answer == null) ? "NOT SOLVED YET" : answer.toPlainString());
     }
 }
