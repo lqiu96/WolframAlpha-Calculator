@@ -4,6 +4,7 @@ import ExpressionList.ListIterator;
 import ExpressionList.Token;
 import ExpressionList.TokenList;
 import ExpressionNodes.*;
+import ExpressionNodes.Boolean;
 import Math.Trigonometry;
 import Math.Constants;
 
@@ -13,8 +14,8 @@ import java.math.BigDecimal;
  * @author Lawrence
  *         Expression is evaluated in a Recursive Descent Parsing method
  *         In terms of order of operations:
- *         1. Parenthesis, Variables, Trig Expressions
- *         2. Log
+ *         1. Parenthesis, Variables, Trig Expressions, Boolean
+ *         2. Log, Negation
  *         3. Operations (*, /, %)
  *         4. Addition and Subtraction
  *         5. Shifting Bits (>>, <<)
@@ -199,13 +200,29 @@ public class ExpressionEvaluate {
      * @return Newly formed tree and returns the root
      */
     private Node handleOperations(ListIterator iterator) throws InvalidExpressionException {
-        Node node = handleParenthesis(iterator);
+        Node node = handleNegation(iterator);
         while (iterator.tokenChar() != 0 && (iterator.getToken().tokenText().equals("*")
                 || iterator.getToken().tokenText().equals("/") || iterator.getToken().tokenText().equals("%"))) {
             Token operation = iterator.getToken();
             iterator.advance();
             if (operation.tokenChar() != 0) {
                 node = new Operation(node, operation.tokenText(), handleParenthesis(iterator));
+            }
+        }
+        return node;
+    }
+
+    private Node handleNegation(ListIterator iterator) throws InvalidExpressionException {
+        Node node = handleParenthesis(iterator);
+        if (iterator.tokenChar() != 0 && iterator.getToken().tokenText().equals("!")) {
+            iterator.advance();
+            Token operation = iterator.getToken();
+            if (operation.tokenText().equals("true")) {
+                node = new Boolean(false);
+            } else if (operation.tokenText().equals("false")){
+                return new Boolean(true);
+            } else {
+                throw new InvalidExpressionException("Cannot negate a non boolean value");
             }
         }
         return node;
@@ -252,10 +269,19 @@ public class ExpressionEvaluate {
             String expression = findInnerExpression(iterator);
             ExpressionEvaluate expressionEvaluate = new ExpressionEvaluate(variableMap);
             expressionEvaluate.setExpression(expression);
-            Logarithmic node = (log.equals("ln")) ? new Logarithmic(expressionEvaluate.getAnswer()) :
+            return (log.equals("ln")) ? new Logarithmic(expressionEvaluate.getAnswer()) :
                     new Logarithmic(expressionEvaluate.getAnswer(), true);
-            return node;
-        } else if (iterator.getToken().tokenText().length() >= 1) {         //Must be a variable name
+        } else if (iterator.getToken().tokenText().equals("true") || iterator.getToken().tokenText().equals("false")) {
+            if (iterator.getToken().tokenText().equals("true")) {
+                iterator.advance();
+                return new Boolean(true);
+            } else {
+                iterator.advance();
+                return new Boolean(false);
+            }
+        } else if (!iterator.getToken().tokenText().equals("!") && iterator.getToken().tokenText().length() >= 1) {
+            //Must be a variable name
+            //Must check to make sure you didn't get !, since that would register as a variable name
             Node node = new Variable(iterator.getToken().tokenText());
             iterator.advance();
             return node;
